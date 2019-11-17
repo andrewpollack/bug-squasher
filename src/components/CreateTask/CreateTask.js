@@ -109,7 +109,7 @@ export default class CreateTask extends React.Component {
      * Returns a form-check-input object for each of the possible priorities for the tasks.
      */
     getPriorityListOptions() {
-        var priorities = ["Low", "Medium", "High", "Very High"];
+        var priorities = ["Low", "Medium", "High"];
         var endOut = [];
         
         for (var i = 0; i < priorities.length; i++) {
