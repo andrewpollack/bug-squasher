@@ -26,7 +26,7 @@ export default class EditTask extends React.Component {
         e.preventDefault();
 
         if(this.state.deleteTask) {
-            axios.delete('http://localhost:4000/tasks/delete/'+this.props.match.params.id)
+            axios.delete('http://localhost:4000/bsDb/task/delete/'+this.props.match.params.id)
             .then(res => console.log(res.data));
             this.props.history.push('/');  
             return;     
@@ -47,7 +47,7 @@ export default class EditTask extends React.Component {
             taskPriority: this.state.taskPriority,
             taskComplete: this.state.taskComplete
         };
-        axios.post('http://localhost:4000/tasks/update/'+this.props.match.params.id, updatedTask)
+        axios.post('http://localhost:4000/bsDb/task/update/'+this.props.match.params.id, updatedTask)
             .then(res => console.log(res.data));
 
         this.props.history.push('/'); 
@@ -55,7 +55,7 @@ export default class EditTask extends React.Component {
     }
 
     componentDidMount() {
-        axios.get('http://localhost:4000/tasks/' + this.props.match.params.id)
+        axios.get('http://localhost:4000/bsDb/task/' + this.props.match.params.id)
             .then(response => {
                 this.setState( {
                     taskDescription: response.data.taskDescription,
@@ -103,7 +103,7 @@ export default class EditTask extends React.Component {
      * Returns a form-check-input object for each of the possible priorities for the tasks.
      */
     getPriorityListOptions() {
-        var priorities = ["Low", "Medium", "High];
+        var priorities = ["Low", "Medium", "High"];
         var endOut = [];
         
         for (var i = 0; i < priorities.length; i++) {

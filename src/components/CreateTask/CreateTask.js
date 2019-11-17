@@ -39,7 +39,7 @@ export default class CreateTask extends React.Component {
             taskPriority: this.state.taskPriority,
             taskComplete: this.state.taskComplete
         };
-        axios.post('http://localhost:4000/tasks/add', newTask)
+        axios.post('http://localhost:4000/bsDb/task/add', newTask)
             .then(res => console.log(res.data));
 
         console.log(`Form submitted:`);
@@ -88,14 +88,14 @@ export default class CreateTask extends React.Component {
     addResponseForSubmission() {
        if(this.state.taskRecentlyAdded) {
            return (
-            <div class="alert alert-success" role="alert">
+            <div className="alert alert-success" role="alert">
                 Task successfully submitted!
             </div>
            );
        }
        else if(this.state.taskSubFailed) {
            return (
-           <div class="alert alert-danger" role="alert">
+           <div className="alert alert-danger" role="alert">
                 Submission failed.  Please leave no boxes blank.
             </div>
             );
