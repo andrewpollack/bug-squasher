@@ -312,7 +312,6 @@ bsRoutes.route("/user/delete/:id").delete(function(req, res) {
  */
 bsRoutes.route("/admin/login").post(function(req, res) {
     var username = req.body.userUsername;
-    var password = req.body.userPassword;
 
     var query = {};
     query['userUsername'] = username;
@@ -335,16 +334,18 @@ bsRoutes.route("/admin/login").post(function(req, res) {
                 console.log(req.session.user_id);
                 console.log(req.session.username);
 
-                res.status(200).send("Login success!");
+                res.status(200).json({'result': 'Success',
+                                      '_id': info._id,
+                                      'username': info.userUsername});
                 return;
             }
             else {
-                res.status(400).send("Incorrect password!");
+                res.status(200).json({'result': 'Password Incorrect'});
                 return;
             }
         }
         else {
-            res.status(200).send("Username not found!");
+            res.status(200).json({'result': 'Username Not Found'});;
             return;
         }
     });
