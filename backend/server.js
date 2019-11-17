@@ -12,6 +12,7 @@ const PORT = 4000;
 
 let Task = require("./Schemas/task.model");
 let User = require("./Schemas/user.model");
+let hashMethods = require("./passwordHashing");
 
 /** Middleware */
 app.use(cors());
@@ -223,6 +224,12 @@ bsRoutes.route("/user/add").post(function(req, res) {
             }
             else {
                 let user = new User(req.body);
+                var passwordEntry = hashMethods.makePasswordEntry(req.body.userPassword);
+                user.userPassword = "";
+
+                user.userDigest = passwordEntry.hash;
+                user.userSalt = passwordEntry.salt;
+                
                 user.save()
                     .then(user => {
                         res.status(200).json({'user': 'user added successfully'});
@@ -232,7 +239,7 @@ bsRoutes.route("/user/add").post(function(req, res) {
                         console.log(err);
                         res.status(400).send("Adding new user failed!");
                         return;
-                    });
+                });
             }
     });
 });
@@ -259,6 +266,8 @@ bsRoutes.route("/user/update/:id").post(function(req, res) {
             user.password = req.body.password;
             user.userTeams = req.body.userTeams;
             user.userAdmins = req.body.userAdmins;
+            
+            // Update password with sha stuff!
             
             user.save().then(user => {
                 res.json("User updated!");
@@ -308,7 +317,7 @@ bsRoutes.route("/admin/login").post(function(req, res) {
     var query = {};
     query['userUsername'] = username;
 
-    User.findOne(query, { userUsername: 1, userPassword: 1}, 
+    User.findOne(query, { userUsername: 1, userDigest: 1, userSalt: 1 }, 
         function (err, info) {
             if (err) {
                 // Query returned an error.  We pass it back to the browser with an Internal Service
@@ -319,9 +328,12 @@ bsRoutes.route("/admin/login").post(function(req, res) {
             }
 
         if(info) {
-            if(password === info.userPassword) {
+            if(hashMethods.doesPasswordMatch(info.userDigest, info.userSalt, req.body.userPassword)) {
                 req.session.user_id = info._id;
                 req.session.username = info.userUsername;
+
+                console.log(req.session.user_id);
+                console.log(req.session.username);
 
                 res.status(200).send("Login success!");
                 return;
@@ -337,6 +349,27 @@ bsRoutes.route("/admin/login").post(function(req, res) {
         }
     });
     
+});
+
+
+bsRoutes.route('/admin/logout').post(function (req, res) {
+    if(req.session.user_id) {
+        delete req.session.user_id;
+        delete req.session.login_name;
+        req.session.destroy(function (err) { 
+            if(err) {
+                res.status(400).send('Unable to logout');
+                return;
+            }
+            else {
+                res.status(200).send("Done");
+                return;
+            }})
+    }
+    else {
+        res.status(401).send('Login not found!');
+        return;
+    }
 });
 
 

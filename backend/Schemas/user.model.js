@@ -5,7 +5,8 @@ let User = new Schema({
     userFirstName: { type: String },
     userLastName: { type: String },
     userUsername: { type: String },
-    userPassword: { type: String },
+    userDigest: { type: String },
+    userSalt: { type: Number },
     userTeams: [mongoose.Schema.Types.ObjectId],
     userAdmins: [mongoose.Schema.Types.ObjectId],
 });
