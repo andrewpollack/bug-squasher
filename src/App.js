@@ -28,7 +28,7 @@ function App() {
                 <Link to="/createTask" className="nav-link">Create Task</Link>
               </li>
               <li className="navbar-item">
-                <Link to="/createUser" className="nav-link">Create User</Link>
+                <Link to="/createUser" className="nav-link">Create Account</Link>
               </li>
             </ul>
           </div>

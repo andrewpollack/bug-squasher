@@ -1,3 +1,15 @@
 .completed {
     text-decoration: line-through;
 }
+
+.High {
+    background-color: rgb(255, 227, 227)
+}
+
+.Medium {
+    background-color: rgb(255, 246, 198)
+}
+
+.Low {
+    background-color: rgb(205, 245, 255)
+}

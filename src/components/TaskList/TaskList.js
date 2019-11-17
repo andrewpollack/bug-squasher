@@ -68,8 +68,11 @@ export default class TaskList extends React.Component {
                 var currTask = this.state.tasks[i];
                 if(currTask.taskPriority === priorities[j]) {
                     endOut.push(
-                        <tr key={this.state.tasks[i]._id}>
-                            <td className={currTask.taskComplete ? "completed" : ""}>{currTask.taskDescription}</td>
+                        <tr className={priorities[j]} 
+                            key={this.state.tasks[i]._id}
+                            >
+                            <td className={currTask.taskComplete ? "completed" : ""}
+                            >{currTask.taskDescription}</td>
                             <td className={currTask.taskComplete ? "completed" : ""}>{currTask.taskResponsible}</td>
                             <td className={currTask.taskComplete ? "completed" : ""}>{currTask.taskPriority}</td>
                             <td>
@@ -91,7 +94,7 @@ export default class TaskList extends React.Component {
         return (
             <div style={{marginTop: 15}}>
                 <h3>Task List</h3>
-                <table className="table table-striped" style={{ marginTop: 20}}>
+                <table className="table" style={{ marginTop: 20}}>
                     <thead>
                         <tr>
                             <th>Description</th>

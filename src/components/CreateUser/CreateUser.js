@@ -158,7 +158,7 @@ export default class CreateUser extends React.Component {
     render() {
         return(
             <div style={{marginTop: 15}}>
-                <h3>Create New User</h3>
+                <h3>Create New Account</h3>
                 <form onSubmit={this.onSubmit}>
                     <div className="form-group">
                         <label>First Name: </label>
@@ -201,7 +201,7 @@ export default class CreateUser extends React.Component {
                         />
                     </div>
                     <div className="form-group">
-                        <input type="submit" value="Create User" className="btn btn-primary" />
+                        <input type="submit" value="Create Account" className="btn btn-primary" />
                     </div>
                     {this.addResponseForSubmission()}
                 </form>
