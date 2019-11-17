@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter as Router, Route, Link } from "react-router-dom";
+import { BrowserRouter as Router, Route, Link, Redirect } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
 
 import logo from "./imgs/logo.png"
@@ -49,7 +49,6 @@ class MainPage extends React.Component {
   render() {
     return (
       <Router>
-        {console.log("ASDF" + this.state.loginState)}
         <div className="container">
           <nav className="navbar navbar-expand-sm navbar-dark bg-dark">
             <a className="navbar-brand" href="/">
@@ -57,6 +56,7 @@ class MainPage extends React.Component {
             </a>
             <Link to="/" className="navbar-brand">Bug Squasher</Link>
             <div className="collapse navbar-collapse">
+              { this.state.loginId ? 
               <ul className="navbar-nav mr-auto">
                 <li className="navbar-item">
                   <Link to="/" className="nav-link">Tasks</Link>
@@ -64,11 +64,12 @@ class MainPage extends React.Component {
                 <li className="navbar-item">
                   <Link to="/createTask" className="nav-link">Create Task</Link>
                 </li>
-                <li className="navbar-item">
-                  <Link to="/createUser" className="nav-link">Create Account</Link>
-                </li>
-              </ul>
-                {this.state.loginId ? 
+              </ul> :
+                <ul className="navbar-nav mr-auto" />
+              }
+
+                {
+                this.state.loginId ? 
                 <form className="form-inline my-2 my-lg-0" onSubmit={this.logoutUser}>
                   <ul className="navbar-nav  nav-pills">
                     <li className="navbar-item">
@@ -82,15 +83,24 @@ class MainPage extends React.Component {
                   <li className="navbar-item">
                     <Link to="/userLogin" className="nav-link">Login</Link>
                   </li>
-                </ul>}
+                </ul>
+                }
+
             </div>
   
           </nav>
-  
-          <Route path="/" exact component={TaskList} />
-          <Route path="/edit/:id" component={EditTask} />
-          <Route path="/createTask" component={CreateTask} />
-          <Route path="/createUser" component={CreateUser} />
+          <Route path="/" exact>
+              {this.state.loginId ? <TaskList /> : <Redirect to="/userLogin" />}
+          </Route> 
+          <Route path="/edit/:id">
+            {this.state.loginId ? <EditTask /> : <Redirect to="/userLogin" />}
+          </Route> 
+          <Route path="/createTask">
+            {this.state.loginId ? <CreateTask /> : <Redirect to="/userLogin" />}
+          </Route> 
+          <Route path="/createUser" 
+                render={props => <CreateUser {...props} changeLoginState={this.updateLoginState} />}
+                />
           <Route path="/userLogin" 
                  render={props => <UserLogin {...props} changeLoginState={this.updateLoginState} />}
                  />

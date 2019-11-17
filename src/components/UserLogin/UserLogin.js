@@ -9,6 +9,7 @@ export default class LoginUser extends React.Component {
         this.onChangeUserUsername = this.onChangeUserUsername.bind(this);
         this.onChangeUserPassword = this.onChangeUserPassword.bind(this);
         this.onSubmit = this.onSubmit.bind(this);
+        this.goToCreateUser = this.goToCreateUser.bind(this);
         this.changeLogin = this.changeLogin.bind(this);
 
         this.state = {
@@ -64,6 +65,10 @@ export default class LoginUser extends React.Component {
 
     }
 
+    goToCreateUser(e) {
+        this.props.history.push('/createUser'); 
+    }
+
     clearPopups() {
         this.setState({
             userLoginFailed: false,
@@ -96,10 +101,17 @@ export default class LoginUser extends React.Component {
     addResponseForSubmission() {
         if(this.state.userLoginFailed) {
             return (
-            <div className="alert alert-danger" role="alert">
-                 Submission failed.  Please leave no boxes blank.
-             </div>
-             );
+                <div className="alert alert-danger form-group" role="alert">
+                    Login failed.  Invalid username/password.
+                </div>
+            );
+        }
+        else if(this.state.userSubFailed) {
+            return (
+                <div className="alert alert-danger form-group" role="alert">
+                     Login failed.  Please leave no boxes blank.
+                 </div>
+            );
         }
         else {
             return;
@@ -127,10 +139,15 @@ export default class LoginUser extends React.Component {
                                 onChange={this.onChangeUserPassword} 
                         />
                     </div>
-                    <div className="form-group">
+                    <div className="form-inline form-group">
                         <input type="submit" value="Login" className="btn btn-primary" />
+                        {this.addResponseForSubmission()}
                     </div>
-                    {this.addResponseForSubmission()}
+                </form>
+                <form onSubmit={this.goToCreateUser}>
+                    <div className="form-group">
+                        <input type="submit" value="Create New Account" className="btn btn-secondary" />
+                    </div>
                 </form>
             </div>
         );

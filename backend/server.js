@@ -138,7 +138,8 @@ bsRoutes.route("/task/update/:id").post(function(req, res) {
             task.taskPriority = req.body.taskPriority;
             task.taskComplete = req.body.taskComplete;
             
-            task.save().then(task => {
+            task.save().then(newTask => {
+                console.log(newTask._id);
                 res.json("Task updated!");
                 return;
             })
@@ -231,8 +232,16 @@ bsRoutes.route("/user/add").post(function(req, res) {
                 user.userSalt = passwordEntry.salt;
                 
                 user.save()
-                    .then(user => {
-                        res.status(200).json({'user': 'user added successfully'});
+                    .then(newUser => {
+                        req.session.user_id = newUser._id;
+                        req.session.username = newUser.userUsername;
+
+                        console.log(req.session.user_id);
+                        console.log(req.session.username);
+
+                        res.status(200).json({'result': 'Success',
+                                            '_id': newUser._id,
+                                            'username': newUser.userUsername});
                         return;
                     })
                     .catch(err => {

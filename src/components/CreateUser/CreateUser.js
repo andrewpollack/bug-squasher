@@ -13,6 +13,8 @@ export default class CreateUser extends React.Component {
         this.onChangeUserPassword = this.onChangeUserPassword.bind(this);
         this.onChangeUserConfirmPassword = this.onChangeUserConfirmPassword.bind(this);
         this.onSubmit = this.onSubmit.bind(this);
+        this.goToLoginUser = this.goToLoginUser.bind(this);
+        this.changeLogin = this.changeLogin.bind(this);
 
         this.state = {
             userFirstName: '',
@@ -70,20 +72,22 @@ export default class CreateUser extends React.Component {
                     return;
                 }
                 else {
-                    this.clearPopups();
-                    this.setState( {
-                        userFirstName: '',
-                        userLastName: '',
-                        userUsername: '',
-                        userPassword: '',
-                        userConfirmPassword: '',
-                        userTeams: [],
-                        userAdmins: [],
-                        userRecentlyAdded: true,
-                    });
+                    this.changeLogin(res.data);
+                    console.log("Successful login");
+                    this.props.history.push('/'); 
                     return;
                 }
             });
+    }
+
+    changeLogin(loginSuccess) {
+        console.log(loginSuccess)
+        this.props.changeLoginState(loginSuccess);
+    }
+
+
+    goToLoginUser(e) {
+        this.props.history.push('/userLogin'); 
     }
 
     clearPopups() {
@@ -137,28 +141,28 @@ export default class CreateUser extends React.Component {
     addResponseForSubmission() {
         if(this.state.userRecentlyAdded) {
             return (
-             <div className="alert alert-success" role="alert">
+             <div className="alert alert-success form-group" role="alert">
                  User successfully created!
              </div>
             );
         }
         else if(this.state.userSubFailed) {
             return (
-            <div className="alert alert-danger" role="alert">
+            <div className="alert alert-danger form-group" role="alert">
                  Submission failed.  Please leave no boxes blank.
              </div>
              );
         }
         else if(this.state.passwordsNotMatch) {
             return (
-            <div className="alert alert-danger" role="alert">
+            <div className="alert alert-danger form-group" role="alert">
                  Submission failed.  Passwords do not match.
              </div>
              );
         }
         else if(this.state.userNameTaken) {
             return (
-            <div className="alert alert-danger" role="alert">
+            <div className="alert alert-danger form-group" role="alert">
                  Submission failed.  Username taken.
              </div>
              );
@@ -213,10 +217,15 @@ export default class CreateUser extends React.Component {
                                 onChange={this.onChangeUserConfirmPassword} 
                         />
                     </div>
-                    <div className="form-group">
+                    <div className="form-inline form-group">
                         <input type="submit" value="Create Account" className="btn btn-primary" />
+                        {this.addResponseForSubmission()}
                     </div>
-                    {this.addResponseForSubmission()}
+                </form>
+                <form onSubmit={this.goToLoginUser}>
+                    <div className="form-group">
+                        <input type="submit" value="Back to Login" className="btn btn-secondary" />
+                    </div>
                 </form>
             </div>
         );
