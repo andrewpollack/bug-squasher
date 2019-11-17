@@ -6,6 +6,7 @@ import logo from "./imgs/logo.png"
 import TaskList from "./components/TaskList/TaskList"
 import EditTask from "./components/EditTask/EditTask"
 import CreateTask from "./components/CreateTask/CreateTask"
+import CreateUser from "./components/CreateUser/CreateUser"
 
 
 
@@ -24,7 +25,10 @@ function App() {
                 <Link to="/" className="nav-link">Tasks</Link>
               </li>
               <li className="navbar-item">
-                <Link to="/create" className="nav-link">Create Task</Link>
+                <Link to="/createTask" className="nav-link">Create Task</Link>
+              </li>
+              <li className="navbar-item">
+                <Link to="/createUser" className="nav-link">Create User</Link>
               </li>
             </ul>
           </div>
@@ -33,7 +37,8 @@ function App() {
 
         <Route path="/" exact component={TaskList} />
         <Route path="/edit/:id" component={EditTask} />
-        <Route path="/create" component={CreateTask} />
+        <Route path="/createTask" component={CreateTask} />
+        <Route path="/createUser" component={CreateUser} />
       </div>
     </Router>
     

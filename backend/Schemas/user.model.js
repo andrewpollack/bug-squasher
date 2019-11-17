@@ -4,8 +4,8 @@ const Schema = mongoose.Schema;
 let User = new Schema({
     userFirstName: { type: String },
     userLastName: { type: String },
-    username: { type: String },
-    password: { type: String },
+    userUsername: { type: String },
+    userPassword: { type: String },
     userTeams: [mongoose.Schema.Types.ObjectId],
     userAdmins: [mongoose.Schema.Types.ObjectId],
 });
