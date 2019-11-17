@@ -1,5 +1,6 @@
 import React from "react";
 import axios from "axios";
+import "./CreateUser.css"
 
 export default class CreateUser extends React.Component {
 
@@ -24,6 +25,7 @@ export default class CreateUser extends React.Component {
             userRecentlyAdded: false,
             userSubFailed: false,
             passwordsNotMatch: false,
+            userNameTaken: false,
         }
     }
 
@@ -34,24 +36,20 @@ export default class CreateUser extends React.Component {
            !this.state.userLastName.trim().length ||
            !this.state.userUsername.trim().length ||
            !this.state.userPassword.trim().length) {
+            this.clearPopups();
             this.setState( {
-                userRecentlyAdded: false,
                 userSubFailed: true,
-                passwordsNotMatch: false
             });
             return;
         }
 
         if(!(this.state.userPassword === this.state.userConfirmPassword)) {
+            this.clearPopups();
             this.setState( {
-                userRecentlyAdded: false,
-                userSubFailed: false,
                 passwordsNotMatch: true
             });
             return;
         }
-
-        // TODO: Check passwords matching
 
         const newUser = {
             userFirstName: this.state.userFirstName,
@@ -63,65 +61,73 @@ export default class CreateUser extends React.Component {
         };
 
         axios.post('http://localhost:4000/bsDb/user/add', newUser)
-            .then(res => console.log(res.data));
+            .then(res => {
+                console.log(res.data.user);
+                if(res.data.user === "Username Taken") {
+                    this.setState( {
+                        userNameTaken: true
+                    });
+                    return;
+                }
+                else {
+                    this.clearPopups();
+                    this.setState( {
+                        userFirstName: '',
+                        userLastName: '',
+                        userUsername: '',
+                        userPassword: '',
+                        userConfirmPassword: '',
+                        userTeams: [],
+                        userAdmins: [],
+                        userRecentlyAdded: true,
+                    });
+                    return;
+                }
+            });
+    }
 
-        this.setState( {
-            userFirstName: '',
-            userLastName: '',
-            userUsername: '',
-            userPassword: '',
-            userConfirmPassword: '',
-            userTeams: [],
-            userAdmins: [],
-            userRecentlyAdded: true,
+    clearPopups() {
+        this.setState({
+            userRecentlyAdded: false,
             userSubFailed: false,
-            passwordsNotMatch: false
-        });
+            passwordsNotMatch: false,
+            userNameTaken: false
+        })
     }
 
     onChangeUserFirstName(e) {
+        this.clearPopups();
         this.setState({
             userFirstName: e.target.value,
-            userRecentlyAdded: false,
-            userSubFailed: false,
-            passwordsNotMatch: false
         });
     }
 
     onChangeUserLastName(e) {
+        this.clearPopups();
         this.setState({
             userLastName: e.target.value,
-            userRecentlyAdded: false,
-            userSubFailed: false,
-            passwordsNotMatch: false
         });
 
     }
 
     onChangeUserUsername(e) {
+        this.clearPopups();
         this.setState({
             userUsername: e.target.value,
-            userRecentlyAdded: false,
-            userSubFailed: false,
-            passwordsNotMatch: false
         });
     }
 
     onChangeUserPassword(e) {
+        this.clearPopups();
         this.setState({
             userPassword: e.target.value,
-            userRecentlyAdded: false,
-            userSubFailed: false,
-            passwordsNotMatch: false
         });
     }
 
     onChangeUserConfirmPassword(e) {
+        this.clearPopups();
         this.setState({
             userConfirmPassword: e.target.value,
-            userRecentlyAdded: false,
-            userSubFailed: false,
-            passwordsNotMatch: false
         });
     }
 
@@ -147,6 +153,13 @@ export default class CreateUser extends React.Component {
             return (
             <div className="alert alert-danger" role="alert">
                  Submission failed.  Passwords do not match.
+             </div>
+             );
+        }
+        else if(this.state.userNameTaken) {
+            return (
+            <div className="alert alert-danger" role="alert">
+                 Submission failed.  Username taken.
              </div>
              );
         }
@@ -177,7 +190,7 @@ export default class CreateUser extends React.Component {
                         />
                     </div>
                     <div className="form-group">
-                        <label>Username: </label>
+                        <label className = {this.state.userNameTaken ? "errorLit" : ""}>Username: </label>
                         <input  type="text"
                                 className="form-control"
                                 value={this.state.userUsername}
@@ -185,7 +198,7 @@ export default class CreateUser extends React.Component {
                         />
                     </div>
                     <div className="form-group">
-                        <label>Password: </label>
+                        <label className = {this.state.passwordsNotMatch ? "errorLit" : ""}>Password: </label>
                         <input  type="password"
                                 className="form-control"
                                 value={this.state.userPassword}
@@ -193,7 +206,7 @@ export default class CreateUser extends React.Component {
                         />
                     </div>
                     <div className="form-group">
-                        <label>Confirm Password: </label>
+                        <label className = {this.state.passwordsNotMatch ? "errorLit" : ""} >Confirm Password: </label>
                         <input  type="password"
                                 className="form-control"
                                 value={this.state.userConfirmPassword}

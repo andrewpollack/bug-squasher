@@ -3,6 +3,8 @@ const app = express();
 const bodyParser = require("body-parser");
 const cors = require("cors");
 const mongoose = require("mongoose");
+const session = require('express-session');
+
 mongoose.set('useFindAndModify', false);
 const bsRoutes = express.Router(); // Gets access to router
 var ObjectId = require("mongoose").Types.ObjectId;
@@ -14,6 +16,7 @@ let User = require("./Schemas/user.model");
 /** Middleware */
 app.use(cors());
 app.use(bodyParser.json());
+app.use(session({secret: 'secretKey', resave: false, saveUninitialized: false}));
 
 mongoose.connect("mongodb://127.0.0.1:27017/bsDb", { 
     useNewUrlParser: true, 
@@ -197,17 +200,41 @@ bsRoutes.route("/user/:id").get(function(req, res) {
  * Adds user
  */
 bsRoutes.route("/user/add").post(function(req, res) {
-    let user = new User(req.body);
-    user.save()
-        .then(user => {
-            res.status(200).json({'user': 'user added successfully'});
+
+    var username = req.body.userUsername;
+
+    var query = {};
+    query['userUsername'] = username;
+
+    User.findOne(query, { userUsername: 1 }, 
+        function (err, info) {
+            if (err) {
+            // Query returned an error.  We pass it back to the browser with an Internal Service
+            // Error (500) error code.
+            console.error('Error!', err);
+            res.status(500).send("Error!");
             return;
-        })
-        .catch(err => {
-            console.log(err);
-            res.status(400).send("Adding new user failed!");
-            return;
-        });
+            }
+
+            if(info) { // Username found...
+                console.log(info)
+                res.status(200).json({'user': 'Username Taken'});
+                return;
+            }
+            else {
+                let user = new User(req.body);
+                user.save()
+                    .then(user => {
+                        res.status(200).json({'user': 'user added successfully'});
+                        return;
+                    })
+                    .catch(err => {
+                        console.log(err);
+                        res.status(400).send("Adding new user failed!");
+                        return;
+                    });
+            }
+    });
 });
 
 /**
@@ -270,6 +297,48 @@ bsRoutes.route("/user/delete/:id").delete(function(req, res) {
         }   
     });
 });
+
+/**
+ * Adds user
+ */
+bsRoutes.route("/admin/login").post(function(req, res) {
+    var username = req.body.userUsername;
+    var password = req.body.userPassword;
+
+    var query = {};
+    query['userUsername'] = username;
+
+    User.findOne(query, { userUsername: 1, userPassword: 1}, 
+        function (err, info) {
+            if (err) {
+                // Query returned an error.  We pass it back to the browser with an Internal Service
+                // Error (500) error code.
+                console.error('Login error!', err);
+                res.status(500).send("Login error!");
+                return;
+            }
+
+        if(info) {
+            if(password === info.userPassword) {
+                req.session.user_id = info._id;
+                req.session.username = info.userUsername;
+
+                res.status(200).send("Login success!");
+                return;
+            }
+            else {
+                res.status(400).send("Incorrect password!");
+                return;
+            }
+        }
+        else {
+            res.status(200).send("Username not found!");
+            return;
+        }
+    });
+    
+});
+
 
 /** User Server CRUD End */
 
