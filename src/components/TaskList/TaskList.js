@@ -2,7 +2,9 @@ import React from "react";
 import { Link } from "react-router-dom";
 import axios from "axios";
 import "./TaskList.css"
+axios.defaults.withCredentials = true;
 
+/* 
 const Task = props => (
     <tr>
         <td className={props.task.taskComplete ? "completed" : ""}>{props.task.taskDescription}</td>
@@ -12,7 +14,7 @@ const Task = props => (
             <Link to={"/edit/" + props.task._id}>Edit</Link>
         </td>
     </tr>
-)
+)*/
 
 export default class TaskList extends React.Component {
 
@@ -27,7 +29,7 @@ export default class TaskList extends React.Component {
     componentDidMount() {
         this._isMounted = true;
 
-        axios.get("http://localhost:4000/tasks")
+        axios.get("http://localhost:4000/bsDb/task/list")
             .then(response => {
                 if (this._isMounted) {
                     this.setState({
@@ -44,31 +46,59 @@ export default class TaskList extends React.Component {
         this._isMounted = false;
       }
 
-    componentDidUpdate() {
-        axios.get("http://localhost:4000/tasks")
-            .then(response => {
-                if (this._isMounted) {
-                    this.setState({
-                        tasks: response.data
-                    });
-                }
-            })
-            .catch(function (error) {
-                console.log(error);
-            })
+    
+    componentDidUpdate(prevProps, prevState) {
+        if(this.state !== prevState) {
+            axios.get("http://localhost:4000/bsDb/task/list")
+                .then(response => {
+                    if (this._isMounted) {
+                        this.setState({
+                            tasks: response.data
+                        });
+                    }
+                })
+                .catch(function (error) {
+                    console.log(error);
+                })
+            }
     }
 
     getTaskList() {
-        return this.state.tasks.map(function(currTask, i) {
-            return <Task task={currTask} key={i} />
-        });
+        var priorities = ["High", "Medium", "Low"];
+        var endOut = [];
+        
+        for (var j = 0; j < priorities.length; j++ ) {
+            for (var i = 0; i < this.state.tasks.length; i++) {
+                var currTask = this.state.tasks[i];
+                if(currTask.taskPriority === priorities[j]) {
+                    endOut.push(
+                        <tr className={priorities[j]} 
+                            key={this.state.tasks[i]._id}
+                            >
+                            <td className={currTask.taskComplete ? "completed" : ""}
+                            >{currTask.taskDescription}</td>
+                            <td className={currTask.taskComplete ? "completed" : ""}>{currTask.taskResponsible}</td>
+                            <td className={currTask.taskComplete ? "completed" : ""}>{currTask.taskPriority}</td>
+                            <td>
+                                <Link to={"/edit/" + currTask._id}>Edit</Link>
+                            </td>
+                        </tr>
+                    );
+                }
+            }
+        }
+        return endOut;
+
+        //return this.state.tasks.map(function(currTask, i) {
+        //   return <Task task={currTask} key={i} />
+        //});
     }
 
     render() {
         return (
-            <div>
+            <div style={{marginTop: 15}}>
                 <h3>Task List</h3>
-                <table className="table table-striped" style={{ marginTop: 20}}>
+                <table className="table" style={{ marginTop: 20}}>
                     <thead>
                         <tr>
                             <th>Description</th>
