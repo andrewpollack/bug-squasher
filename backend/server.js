@@ -15,9 +15,17 @@ let User = require("./Schemas/user.model");
 let hashMethods = require("./passwordHashing");
 
 /** Middleware */
-app.use(cors());
+app.use(cors({
+    credentials: true,
+    origin:['http://localhost:3000'],
+    methods:['GET','POST'],
+  }));
 app.use(bodyParser.json());
-app.use(session({secret: 'secretKey', resave: false, saveUninitialized: false}));
+app.use(session({secret: 'secretKey', 
+                 resave: false, 
+                 saveUninitialized: false,
+                 cookie: { secure: false }}));
+                           
 
 mongoose.connect("mongodb://127.0.0.1:27017/bsDb", { 
     useNewUrlParser: true, 
@@ -35,7 +43,12 @@ connection.once("open", function() {
 /**
  * Retrieves task list
  */
-bsRoutes.route("/task/list").get(function(req, res) {
+bsRoutes.get("/task/list", function(req, res) {
+    if(!req.session.user_id) {
+        res.status(401).send('No user login');
+        return;
+    }
+
     Task.find(function(err, tasks) {
         if (err) {
             console.log(err);
@@ -52,7 +65,12 @@ bsRoutes.route("/task/list").get(function(req, res) {
 /**
  * Retrieves specific task information
  */
-bsRoutes.route("/task/:id").get(function(req, res) {
+bsRoutes.get("/task/:id", function(req, res) {
+    if(!req.session.user_id) {
+        res.status(401).send('No user login');
+        return;
+    }
+
     if(!ObjectId.isValid(req.params.id)) {
         res.status(400).send("Not a valid ID: " + req.params.id);   
         return;
@@ -78,8 +96,14 @@ bsRoutes.route("/task/:id").get(function(req, res) {
 /**
  * Adds task
  */
-bsRoutes.route("/task/add").post(function(req, res) {
+bsRoutes.post("/task/add", function(req, res) {
+    if(!req.session.user_id) {
+        res.status(401).send('No user login');
+        return;
+    }
+
     let task = new Task(req.body);
+    task.userCreator = req.session.user_id;
     task.save()
         .then(task => {
             res.status(200).json({'task': 'task added successfully'});
@@ -95,7 +119,12 @@ bsRoutes.route("/task/add").post(function(req, res) {
 /**
  * Deletes task
  */
-bsRoutes.route("/task/delete/:id").delete(function(req, res) {
+bsRoutes.delete("/task/delete/:id", function(req, res) {
+    if(!req.session.user_id) {
+        res.status(401).send('No user login');
+        return;
+    }
+
     if(!ObjectId.isValid(req.params.id)) {
         res.status(400).send("Not a valid ID: " + req.params.id);
         return;
@@ -120,7 +149,12 @@ bsRoutes.route("/task/delete/:id").delete(function(req, res) {
 /**
  * Updates task
  */
-bsRoutes.route("/task/update/:id").post(function(req, res) {
+bsRoutes.post("/task/update/:id", function(req, res) {
+    if(!req.session.user_id) {
+        res.status(401).send('No user login');
+        return;
+    }
+
     if(!ObjectId.isValid(req.params.id)) {
         res.status(400).send("Not a valid ID: " + req.params.id);
         return;
@@ -158,7 +192,12 @@ bsRoutes.route("/task/update/:id").post(function(req, res) {
 /**
  * Retrieves user list
  */
-bsRoutes.route("/user/list").get(function(req, res) {
+bsRoutes.get("/user/list", function(req, res) {
+    if(!req.session.user_id) {
+        res.status(401).send('No user login');
+        return;
+    }
+
     User.find(function(err, tasks) {
         if (err) {
             console.log(err);
@@ -175,7 +214,12 @@ bsRoutes.route("/user/list").get(function(req, res) {
 /**
  * Retrieves specific user information
  */
-bsRoutes.route("/user/:id").get(function(req, res) {
+bsRoutes.get("/user/:id", function(req, res) {
+    if(!req.session.user_id) {
+        res.status(401).send('No user login');
+        return;
+    }
+
     if(!ObjectId.isValid(req.params.id)) {
         res.status(400).send("Not a valid ID: " + req.params.id);   
         return;
@@ -201,7 +245,7 @@ bsRoutes.route("/user/:id").get(function(req, res) {
 /**
  * Adds user
  */
-bsRoutes.route("/user/add").post(function(req, res) {
+bsRoutes.post("/user/add", function(req, res) {
 
     var username = req.body.userUsername;
 
@@ -230,24 +274,22 @@ bsRoutes.route("/user/add").post(function(req, res) {
 
                 user.userDigest = passwordEntry.hash;
                 user.userSalt = passwordEntry.salt;
-                
-                user.save()
-                    .then(newUser => {
-                        req.session.user_id = newUser._id;
-                        req.session.username = newUser.userUsername;
 
-                        console.log(req.session.user_id);
-                        console.log(req.session.username);
-
-                        res.status(200).json({'result': 'Success',
-                                            '_id': newUser._id,
-                                            'username': newUser.userUsername});
-                        return;
-                    })
-                    .catch(err => {
-                        console.log(err);
+                User.create(user, function(err, newUser) {
+                    if (err) {
                         res.status(400).send("Adding new user failed!");
                         return;
+                    }
+        
+                    newUser.save(function(err) {
+                        console.log(err);
+                    });
+                    req.session.user_id = newUser._id;
+                    req.session.username = newUser.userUsername;
+        
+                    res.status(200).json({'result': 'Success',
+                                            '_id': newUser._id,
+                                            'username': newUser.userUsername})
                 });
             }
     });
@@ -256,7 +298,12 @@ bsRoutes.route("/user/add").post(function(req, res) {
 /**
  * Updates user
  */
-bsRoutes.route("/user/update/:id").post(function(req, res) {
+bsRoutes.post("/user/update/:id", function(req, res) {
+    if(!req.session.user_id) {
+        res.status(401).send('No user login');
+        return;
+    }
+
     if(!ObjectId.isValid(req.params.id)) {
         res.status(400).send("Not a valid ID: " + req.params.id);
         return;
@@ -294,7 +341,7 @@ bsRoutes.route("/user/update/:id").post(function(req, res) {
 /**
  * Deletes user (Can't just put it in, need to also remove from groups)
  */
-bsRoutes.route("/user/delete/:id").delete(function(req, res) {
+bsRoutes.delete("/user/delete/:id", function(req, res) {
     if(!ObjectId.isValid(req.params.id)) {
         res.status(400).send("Not a valid ID: " + req.params.id);
         return;
@@ -317,16 +364,21 @@ bsRoutes.route("/user/delete/:id").delete(function(req, res) {
 });
 
 /**
- * Adds user
+ * Login user
  */
-bsRoutes.route("/admin/login").post(function(req, res) {
+bsRoutes.post("/admin/login", function(req, res) {    
+    if(req.session.user_id) {
+        console.log("LOGGED IN");
+        res.status(401).send('Already logged in');
+        return;
+    }
+
     var username = req.body.userUsername;
 
     var query = {};
     query['userUsername'] = username;
 
-    User.findOne(query, { userUsername: 1, userDigest: 1, userSalt: 1 }, 
-        function (err, info) {
+    User.findOne(query, { userUsername: 1, userDigest: 1, userSalt: 1 }, function (err, info) {
             if (err) {
                 // Query returned an error.  We pass it back to the browser with an Internal Service
                 // Error (500) error code.
@@ -335,37 +387,32 @@ bsRoutes.route("/admin/login").post(function(req, res) {
                 return;
             }
 
-        if(info) {
-            if(hashMethods.doesPasswordMatch(info.userDigest, info.userSalt, req.body.userPassword)) {
-                req.session.user_id = info._id;
-                req.session.username = info.userUsername;
-
-                console.log(req.session.user_id);
-                console.log(req.session.username);
-
-                res.status(200).json({'result': 'Success',
-                                      '_id': info._id,
-                                      'username': info.userUsername});
+            if(info === null) {
+                res.status(200).json({'result': 'Username Not Found'});
                 return;
+
             }
-            else {
+            if(!hashMethods.doesPasswordMatch(info.userDigest, info.userSalt, req.body.userPassword)) {
                 res.status(200).json({'result': 'Password Incorrect'});
-                return;
+                return; 
             }
-        }
-        else {
-            res.status(200).json({'result': 'Username Not Found'});;
-            return;
-        }
+            req.session.user_id = info._id;
+            req.session.username = info.userUsername;
+            res.status(200).send(JSON.stringify({'result': 'Success',
+                                    '_id': info._id,
+                                     'username': info.userUsername}));
     });
-    
 });
 
 
-bsRoutes.route('/admin/logout').post(function (req, res) {
+bsRoutes.post("/admin/logout", function (req, res) {
+    if(!req.session.user_id) {
+        console.log("ALDREADY");
+        res.status(401).send('Already logged out');
+        return;
+    }
+
     if(req.session.user_id) {
-        delete req.session.user_id;
-        delete req.session.login_name;
         req.session.destroy(function (err) { 
             if(err) {
                 res.status(400).send('Unable to logout');
@@ -374,17 +421,13 @@ bsRoutes.route('/admin/logout').post(function (req, res) {
             else {
                 res.status(200).send("Done");
                 return;
-            }})
-    }
-    else {
-        res.status(401).send('Login not found!');
-        return;
+            }
+        });
     }
 });
 
 
 /** User Server CRUD End */
-
 
 
 app.use("/bsDb", bsRoutes); // Allows usage of database

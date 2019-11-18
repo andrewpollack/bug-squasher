@@ -2,6 +2,7 @@ import React from "react";
 import { Link } from "react-router-dom";
 import axios from "axios";
 import "./TaskList.css"
+axios.defaults.withCredentials = true;
 
 /* 
 const Task = props => (
@@ -45,7 +46,8 @@ export default class TaskList extends React.Component {
         this._isMounted = false;
       }
 
-    componentDidUpdate() {
+    /**
+     * componentDidUpdate() {
         axios.get("http://localhost:4000/bsDb/task/list")
             .then(response => {
                 if (this._isMounted) {
@@ -57,7 +59,7 @@ export default class TaskList extends React.Component {
             .catch(function (error) {
                 console.log(error);
             })
-    }
+    }*/
 
     getTaskList() {
         var priorities = ["High", "Medium", "Low"];

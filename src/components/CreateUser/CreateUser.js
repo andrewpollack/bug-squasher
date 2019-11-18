@@ -1,6 +1,8 @@
 import React from "react";
 import axios from "axios";
-import "./CreateUser.css"
+import "./CreateUser.css";
+axios.defaults.withCredentials = true;
+
 
 export default class CreateUser extends React.Component {
 
