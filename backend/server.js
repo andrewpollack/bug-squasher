@@ -49,7 +49,10 @@ bsRoutes.get("/task/list", function(req, res) {
         return;
     }
 
-    Task.find(function(err, tasks) {
+    var query = {};
+    query['userCreator'] = req.session.user_id;
+
+    Task.find(query,function(err, tasks) {
         if (err) {
             console.log(err);
             res.status(400).send("Retrieving tasks failed!");
@@ -367,11 +370,6 @@ bsRoutes.delete("/user/delete/:id", function(req, res) {
  * Login user
  */
 bsRoutes.post("/admin/login", function(req, res) {    
-    if(req.session.user_id) {
-        console.log("LOGGED IN");
-        res.status(401).send('Already logged in');
-        return;
-    }
 
     var username = req.body.userUsername;
 

@@ -46,20 +46,22 @@ export default class TaskList extends React.Component {
         this._isMounted = false;
       }
 
-    /**
-     * componentDidUpdate() {
-        axios.get("http://localhost:4000/bsDb/task/list")
-            .then(response => {
-                if (this._isMounted) {
-                    this.setState({
-                        tasks: response.data
-                    });
-                }
-            })
-            .catch(function (error) {
-                console.log(error);
-            })
-    }*/
+    
+    componentDidUpdate(prevProps, prevState) {
+        if(this.state !== prevState) {
+            axios.get("http://localhost:4000/bsDb/task/list")
+                .then(response => {
+                    if (this._isMounted) {
+                        this.setState({
+                            tasks: response.data
+                        });
+                    }
+                })
+                .catch(function (error) {
+                    console.log(error);
+                })
+            }
+    }
 
     getTaskList() {
         var priorities = ["High", "Medium", "Low"];

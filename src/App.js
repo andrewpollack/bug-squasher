@@ -99,9 +99,11 @@ class MainPage extends React.Component {
           <Route path="/" exact>
               {this.state.loginId ? <TaskList /> : <Redirect to="/userLogin" />}
           </Route> 
-          <Route path="/edit/:id">
-            {this.state.loginId ? <EditTask /> : <Redirect to="/userLogin" />}
-          </Route> 
+
+          <Route path="/edit/:id"
+            render={props => <EditTask {...props} />}
+          /> 
+          
           <Route path="/createTask">
             {this.state.loginId ? <CreateTask /> : <Redirect to="/userLogin" />}
           </Route> 
