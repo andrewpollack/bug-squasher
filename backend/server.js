@@ -176,7 +176,6 @@ bsRoutes.post("/task/update/:id", function(req, res) {
             task.taskComplete = req.body.taskComplete;
             
             task.save().then(newTask => {
-                console.log(newTask._id);
                 res.json("Task updated!");
                 return;
             })
@@ -266,7 +265,6 @@ bsRoutes.post("/user/add", function(req, res) {
             }
 
             if(info) { // Username found...
-                console.log(info)
                 res.status(200).json({'user': 'Username Taken'});
                 return;
             }
@@ -405,7 +403,6 @@ bsRoutes.post("/admin/login", function(req, res) {
 
 bsRoutes.post("/admin/logout", function (req, res) {
     if(!req.session.user_id) {
-        console.log("ALDREADY");
         res.status(401).send('Already logged out');
         return;
     }
