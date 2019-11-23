@@ -2,6 +2,7 @@ import React from "react";
 import { Link } from "react-router-dom";
 import axios from "axios";
 import "./TaskList.css"
+import { thisExpression } from "@babel/types";
 axios.defaults.withCredentials = true;
 
 /* 
@@ -22,7 +23,8 @@ export default class TaskList extends React.Component {
         super(props);
 
         this.state = {
-            tasks: []
+            tasks: [],
+            loaded: false
         };
     }
 
@@ -33,7 +35,8 @@ export default class TaskList extends React.Component {
             .then(response => {
                 if (this._isMounted) {
                     this.setState({
-                        tasks: response.data
+                        tasks: response.data,
+                        loaded: true 
                     });
                 }
             })
@@ -86,6 +89,15 @@ export default class TaskList extends React.Component {
                     );
                 }
             }
+        }
+        if(this.state.loaded && endOut.length == 0) {
+            endOut.push(
+                <tr key="No tasks here">
+                    <td>
+                        You're all caught up!  Click "Create Tasks" at the top to make more!
+                    </td>
+                </tr>
+            );
         }
         return endOut;
 
