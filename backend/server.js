@@ -18,7 +18,7 @@ let hashMethods = require("./passwordHashing");
 app.use(cors({
     credentials: true,
     origin:['http://localhost:3000'],
-    methods:['GET','POST'],
+    methods:['GET','POST', 'DELETE'],
   }));
 app.use(bodyParser.json());
 app.use(session({secret: 'secretKey', 
