@@ -2,7 +2,7 @@ import React from "react";
 import { Link } from "react-router-dom";
 import axios from "axios";
 import "./TaskList.css"
-import { thisExpression } from "@babel/types";
+//import { thisExpression } from "@babel/types";
 axios.defaults.withCredentials = true;
 
 /* 
@@ -90,7 +90,7 @@ export default class TaskList extends React.Component {
                 }
             }
         }
-        if(this.state.loaded && endOut.length == 0) {
+        if(this.state.loaded && endOut.length === 0) {
             endOut.push(
                 <tr key="No tasks here">
                     <td>
