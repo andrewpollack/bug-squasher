@@ -2,7 +2,6 @@ import React from "react";
 import { Link } from "react-router-dom";
 import axios from "axios";
 import "./TaskList.css"
-//import { thisExpression } from "@babel/types";
 axios.defaults.withCredentials = true;
 
 /* 

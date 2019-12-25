@@ -40,7 +40,6 @@ export default class LoginUser extends React.Component {
 
         axios.post('http://localhost:4000/bsDb/admin/login', loginUser)
             .then(res => {
-                console.log(res.data.result);
                 if(res.data.result === "Username Not Found") {
                     this.setState( {
                         userLoginFailed: true
@@ -54,7 +53,6 @@ export default class LoginUser extends React.Component {
                     return;
                 }
                 else {
-                    console.log(res);
                     this.changeLogin(res.data);
                     console.log("Successful login");
                     this.props.history.push('/'); 
@@ -79,7 +77,6 @@ export default class LoginUser extends React.Component {
     }
 
     changeLogin(loginSuccess) {
-        console.log(loginSuccess)
         this.props.changeLoginState(loginSuccess);
     }
 
