@@ -4,11 +4,14 @@ const bodyParser = require("body-parser");
 const cors = require("cors");
 const mongoose = require("mongoose");
 const session = require('express-session');
+const path = require("path")
+require("dotenv").config();
 
 mongoose.set('useFindAndModify', false);
 const bsRoutes = express.Router(); // Gets access to router
 var ObjectId = require("mongoose").Types.ObjectId;
-const PORT = 4000;
+const port = process.env.PORT || 4000;
+
 
 let Task = require("./Schemas/task.model");
 let User = require("./Schemas/user.model");
@@ -21,13 +24,18 @@ app.use(cors({
     methods:['GET','POST', 'DELETE'],
   }));
 app.use(bodyParser.json());
-app.use(session({secret: 'secretKey', 
+const secret = process.env.SECRET || "secretKey"
+
+app.use(session({secret: secret, 
                  resave: false, 
                  saveUninitialized: false,
                  cookie: { secure: false }}));
+
+app.use(express.static(path.join(__dirname, "..", "build")))
+
                            
 
-mongoose.connect("mongodb://127.0.0.1:27017/bsDb", { 
+mongoose.connect(process.env.MONGODB_URI || "mongodb://127.0.0.1:27017/bsDb", { 
     useNewUrlParser: true, 
     useUnifiedTopology: true
 });  // Connects to mongoDB database
@@ -427,6 +435,10 @@ bsRoutes.post("/admin/logout", function (req, res) {
 
 app.use("/bsDb", bsRoutes); // Allows usage of database
 
-app.listen(PORT, function() {
-    console.log("Successfully running server on Port: " + PORT);
+app.get("*", (req, res) => {
+    res.sendFile(path.join(__dirname, "..", "build", "index.html"));
+});
+
+app.listen(port, function() {
+    console.log("Successfully running server on Port: " + port);
 });
