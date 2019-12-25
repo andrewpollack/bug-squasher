@@ -41,22 +41,17 @@ export default class CreateTask extends React.Component {
             taskComplete: this.state.taskComplete
         };
         axios.post('http://localhost:4000/bsDb/task/add', newTask)
-            .then(res => console.log(res.data));
-
-        console.log(`Form submitted:`);
-        console.log(`Description: ${this.state.taskDescription}`);
-        console.log(`Responsible: ${this.state.taskResponsible}`);
-        console.log(`Priority: ${this.state.taskPriority}`);
-        console.log(`Completed: ${this.state.taskComplete}`);
-        
-        this.setState( {
-            taskDescription: '',
-            taskResponsible: '',
-            taskPriority: 'Low',
-            taskComplete: false,
-            taskRecentlyAdded: true,
-            taskSubFailed: false
-        });
+            .then(
+                res => {
+                    this.setState( {
+                        taskDescription: '',
+                        taskResponsible: '',
+                        taskPriority: 'Low',
+                        taskComplete: false,
+                        taskRecentlyAdded: true,
+                        taskSubFailed: false
+                    });
+            });
     }
 
     onChangeTaskDescription(e) {

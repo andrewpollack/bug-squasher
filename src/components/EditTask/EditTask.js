@@ -28,9 +28,11 @@ export default class EditTask extends React.Component {
 
         if(this.state.deleteTask) {
             axios.delete('http://localhost:4000/bsDb/task/delete/'+this.props.match.params.id)
-            .then(res => console.log(res.data));
-            this.props.history.push('/');  
-            return;     
+            .then(res => {
+                //console.log(res.data)
+                this.props.history.push('/');  
+                return;
+            });     
         }
 
         if(!this.state.taskDescription.trim().length ||
@@ -49,10 +51,11 @@ export default class EditTask extends React.Component {
             taskComplete: this.state.taskComplete
         };
         axios.post('http://localhost:4000/bsDb/task/update/'+this.props.match.params.id, updatedTask)
-            .then(res => console.log(res.data));
-
-        this.props.history.push('/'); 
-        return;       
+            .then( res =>  {
+                //console.log(res.data);
+                this.props.history.push('/'); 
+                return;       
+            });     
     }
 
     componentDidMount() {

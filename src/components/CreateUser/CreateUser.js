@@ -66,7 +66,6 @@ export default class CreateUser extends React.Component {
 
         axios.post('http://localhost:4000/bsDb/user/add', newUser)
             .then(res => {
-                console.log(res.data.user);
                 if(res.data.user === "Username Taken") {
                     this.setState( {
                         userNameTaken: true
@@ -83,7 +82,6 @@ export default class CreateUser extends React.Component {
     }
 
     changeLogin(loginSuccess) {
-        console.log(loginSuccess)
         this.props.changeLoginState(loginSuccess);
     }
 
