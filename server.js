@@ -19,11 +19,11 @@ let hashMethods = require("./backend/passwordHashing");
 const mySecret = process.env.SECRET || "secretKey";
 
 /** Middleware */
-app.use(cors({
+/*app.use(cors({
     credentials: true,
     origin:['http://localhost:3000'],
     methods:['GET','POST', 'DELETE'],
-  }));
+  }));*/
 app.use(bodyParser.json());
 app.use(session({secret: mySecret, 
                  resave: false, 
@@ -36,6 +36,8 @@ mongoose.connect(process.env.MONGOLAB_PUCE_URI || "mongodb://127.0.0.1:27017/bsD
     useNewUrlParser: true, 
     useUnifiedTopology: true
 });  // Connects to mongoDB database
+
+app.use(cors());
 
 const connection = mongoose.connection;
 
