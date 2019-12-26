@@ -39,7 +39,7 @@ class MainPage extends React.Component {
       loginId: this.state.loginId,
     };
 
-    axios.post("http://localhost:4000/bsDb/admin/logout", loginUser)
+    axios.post("/admin/logout", loginUser)
     .then(response => {
       if(response) {
         this.setState({

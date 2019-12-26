@@ -30,7 +30,7 @@ export default class TaskList extends React.Component {
     componentDidMount() {
         this._isMounted = true;
 
-        axios.get("http://localhost:4000/bsDb/task/list")
+        axios.get("/task/list")
             .then(response => {
                 if (this._isMounted) {
                     this.setState({
@@ -51,7 +51,7 @@ export default class TaskList extends React.Component {
     
     componentDidUpdate(prevProps, prevState) {
         if(this.state !== prevState) {
-            axios.get("http://localhost:4000/bsDb/task/list")
+            axios.get("/task/list")
                 .then(response => {
                     if (this._isMounted) {
                         this.setState({

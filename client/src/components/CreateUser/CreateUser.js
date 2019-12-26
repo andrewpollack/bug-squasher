@@ -64,7 +64,7 @@ export default class CreateUser extends React.Component {
             userAdmins: this.state.userAdmins
         };
 
-        axios.post('http://localhost:4000/bsDb/user/add', newUser)
+        axios.post('/user/add', newUser)
             .then(res => {
                 if(res.data.user === "Username Taken") {
                     this.setState( {

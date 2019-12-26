@@ -40,7 +40,7 @@ export default class CreateTask extends React.Component {
             taskPriority: this.state.taskPriority,
             taskComplete: this.state.taskComplete
         };
-        axios.post('http://localhost:4000/bsDb/task/add', newTask)
+        axios.post('/task/add', newTask)
             .then(
                 res => {
                     this.setState( {

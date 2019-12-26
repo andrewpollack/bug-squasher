@@ -27,7 +27,7 @@ export default class EditTask extends React.Component {
         e.preventDefault();
 
         if(this.state.deleteTask) {
-            axios.delete('http://localhost:4000/bsDb/task/delete/'+this.props.match.params.id)
+            axios.delete('/task/delete/'+this.props.match.params.id)
             .then(res => {
                 //console.log(res.data)
                 this.props.history.push('/');  
@@ -50,7 +50,7 @@ export default class EditTask extends React.Component {
             taskPriority: this.state.taskPriority,
             taskComplete: this.state.taskComplete
         };
-        axios.post('http://localhost:4000/bsDb/task/update/'+this.props.match.params.id, updatedTask)
+        axios.post('/task/update/'+this.props.match.params.id, updatedTask)
             .then( res =>  {
                 //console.log(res.data);
                 this.props.history.push('/'); 
@@ -59,7 +59,7 @@ export default class EditTask extends React.Component {
     }
 
     componentDidMount() {
-        axios.get('http://localhost:4000/bsDb/task/' + this.props.match.params.id)
+        axios.get('/bsDb/task/' + this.props.match.params.id)
             .then(response => {
                 this.setState( {
                     taskDescription: response.data.taskDescription,
