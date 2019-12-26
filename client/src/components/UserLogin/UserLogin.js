@@ -38,7 +38,7 @@ export default class LoginUser extends React.Component {
             userPassword: this.state.userPassword,
         };
 
-        axios.post(("https://mybugsquasher.herokuapp.com/") + '/bsDb/admin/login', loginUser)
+        axios.post('/admin/login', loginUser)
             .then(res => {
                 if(res.data.result === "Username Not Found") {
                     this.setState( {

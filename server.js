@@ -440,7 +440,7 @@ bsRoutes.post("/admin/logout", function (req, res) {
 /** User Server CRUD End */
 
 
-app.use("/bsDb", bsRoutes); // Allows usage of database
+app.use("/", bsRoutes); // Allows usage of database
 
 app.get("*", (req, res) => {
     res.sendFile(path.join(__dirname, "client", "build", "index.html"));
