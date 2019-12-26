@@ -59,7 +59,7 @@ export default class EditTask extends React.Component {
     }
 
     componentDidMount() {
-        axios.get('/bsDb/task/' + this.props.match.params.id)
+        axios.get('/task/' + this.props.match.params.id)
             .then(response => {
                 this.setState( {
                     taskDescription: response.data.taskDescription,
