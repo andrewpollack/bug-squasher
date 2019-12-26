@@ -7,7 +7,20 @@ const session = require('express-session');
 const path = require("path");
 require("dotenv").config();
 
-app.use(cors())
+app.use(cors({
+    origin: 'http://localhost',
+    allowedHeaders: ["Content-Type", "Authorization"]
+}));
+
+app.options('*', cors());
+
+app.all('', function(req, res, next) {
+    res.header("Access-Control-Allow-Origin", "http://localhost");
+    res.header('Access-Control-Allow-Methods', 'PUT, GET, POST, DELETE, OPTIONS');
+    res.header('Access-Control-Allow-Headers', "Origin, X-Requested-With, Content-Type, Accept, Authorization");
+    //Auth Each API Request created by user.
+    next();
+});
 
 
 mongoose.set('useFindAndModify', false);
@@ -20,12 +33,7 @@ let User = require("./Schemas/user.model");
 let hashMethods = require("./backend/passwordHashing");
 const mySecret = process.env.SECRET || "secretKey";
 
-/** Middleware */
-/*app.use(cors({
-    credentials: true,
-    origin:['http://localhost:3000'],
-    methods:['GET','POST', 'DELETE'],
-  }));*/
+
 app.use(bodyParser.json());
 app.use(session({secret: mySecret, 
                  resave: false, 
@@ -38,16 +46,6 @@ mongoose.connect(process.env.MONGOLAB_PUCE_URI || "mongodb://127.0.0.1:27017/bsD
     useNewUrlParser: true, 
     useUnifiedTopology: true
 });  // Connects to mongoDB database
-
-app.use(function(req, res, next) {
-    res.header("Access-Control-Allow-Origin", '*');
-    res.header("Access-Control-Allow-Credentials", true);
-    res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS');
-    res.header("Access-Control-Allow-Headers", 'Origin,X-Requested-With,Content-Type,Accept,content-type,application/json');
-    next();
-});
-
-app.use(cors());
 
 const connection = mongoose.connection;
 
