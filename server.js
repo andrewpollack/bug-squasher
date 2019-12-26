@@ -58,7 +58,7 @@ connection.once("open", function() {
 /**
  * Retrieves task list
  */
-bsRoutes.get("/task/list", cors(), function(req, res) {
+bsRoutes.get("/task/list", function(req, res) {
     if(!req.session.user_id) {
         res.status(401).send('No user login');
         return;
@@ -83,7 +83,7 @@ bsRoutes.get("/task/list", cors(), function(req, res) {
 /**
  * Retrieves specific task information
  */
-bsRoutes.get("/task/:id", cors(), function(req, res) {
+bsRoutes.get("/task/:id", function(req, res) {
     if(!req.session.user_id) {
         res.status(401).send('No user login');
         return;
@@ -114,7 +114,7 @@ bsRoutes.get("/task/:id", cors(), function(req, res) {
 /**
  * Adds task
  */
-bsRoutes.post("/task/add", cors(), function(req, res) {
+bsRoutes.post("/task/add", function(req, res) {
     if(!req.session.user_id) {
         res.status(401).send('No user login');
         return;
@@ -137,7 +137,7 @@ bsRoutes.post("/task/add", cors(), function(req, res) {
 /**
  * Deletes task
  */
-bsRoutes.delete("/task/delete/:id", cors(), function(req, res) {
+bsRoutes.delete("/task/delete/:id", function(req, res) {
     if(!req.session.user_id) {
         res.status(401).send('No user login');
         return;
@@ -167,7 +167,7 @@ bsRoutes.delete("/task/delete/:id", cors(), function(req, res) {
 /**
  * Updates task
  */
-bsRoutes.post("/task/update/:id", cors(), function(req, res) {
+bsRoutes.post("/task/update/:id",  function(req, res) {
     if(!req.session.user_id) {
         res.status(401).send('No user login');
         return;
@@ -209,7 +209,7 @@ bsRoutes.post("/task/update/:id", cors(), function(req, res) {
 /**
  * Retrieves user list
  */
-bsRoutes.get("/user/list", cors(), function(req, res) {
+bsRoutes.get("/user/list", function(req, res) {
     if(!req.session.user_id) {
         res.status(401).send('No user login');
         return;
@@ -231,7 +231,7 @@ bsRoutes.get("/user/list", cors(), function(req, res) {
 /**
  * Retrieves specific user information
  */
-bsRoutes.get("/user/:id", cors(), function(req, res) {
+bsRoutes.get("/user/:id", function(req, res) {
     if(!req.session.user_id) {
         res.status(401).send('No user login');
         return;
@@ -262,7 +262,7 @@ bsRoutes.get("/user/:id", cors(), function(req, res) {
 /**
  * Adds user
  */
-bsRoutes.post("/user/add", cors(), function(req, res) {
+bsRoutes.post("/user/add", function(req, res) {
 
     var username = req.body.userUsername;
 
@@ -314,7 +314,7 @@ bsRoutes.post("/user/add", cors(), function(req, res) {
 /**
  * Updates user
  */
-bsRoutes.post("/user/update/:id", cors(), function(req, res) {
+bsRoutes.post("/user/update/:id", function(req, res) {
     if(!req.session.user_id) {
         res.status(401).send('No user login');
         return;
@@ -357,7 +357,7 @@ bsRoutes.post("/user/update/:id", cors(), function(req, res) {
 /**
  * Deletes user (Can't just put it in, need to also remove from groups)
  */
-bsRoutes.delete("/user/delete/:id", cors(), function(req, res) {
+bsRoutes.delete("/user/delete/:id", function(req, res) {
     if(!ObjectId.isValid(req.params.id)) {
         res.status(400).send("Not a valid ID: " + req.params.id);
         return;
@@ -382,7 +382,7 @@ bsRoutes.delete("/user/delete/:id", cors(), function(req, res) {
 /**
  * Login user
  */
-bsRoutes.post("/admin/login", cors(), function(req, res) {    
+bsRoutes.post("/admin/login",  function(req, res) {    
 
     var username = req.body.userUsername;
 
@@ -416,7 +416,7 @@ bsRoutes.post("/admin/login", cors(), function(req, res) {
 });
 
 
-bsRoutes.post("/admin/logout", cors(), function (req, res) {
+bsRoutes.post("/admin/logout", function (req, res) {
     if(!req.session.user_id) {
         res.status(401).send('Already logged out');
         return;
